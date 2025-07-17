@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  flask-app:
+    build: ./flask-app
+    ports:
+      - "8000:8000"
+    networks:
+      - monitor-net
+
+  beyla:
+    image: grafana/beyla:latest
+    command: ["--config", "/etc/beyla/beyla-config.yaml"]
+    volumes:
+      - ./beyla-config.yaml:/etc/beyla/beyla-config.yaml
+      - /sys:/sys
+      - /proc:/host/proc
+    environment:
+      - BEYLA_LOG_LEVEL=info
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      - monitor-net
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor-net
+
+  tempo:
+    image: grafana/tempo:latest
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "4317:4317"
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - monitor-net
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
+
+networks:
+  monitor-net:
+    driver: bridge
