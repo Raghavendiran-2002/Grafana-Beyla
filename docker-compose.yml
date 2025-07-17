@@ -14,6 +14,7 @@ services:
     network_mode: "host"
     pid: "host"
     volumes:
+      - ./beyla-config.yaml:/beyla-config.yaml
       - /sys:/sys
       - /proc:/proc
       - /etc/os-release:/etc/os-release:ro

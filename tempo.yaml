@@ -1,20 +1,34 @@
-auth_enabled: false
-server:
-  http_listen_port: 3200
-  grpc_listen_port: 4317
-receivers:
-  otlp:
-    protocols:
-      grpc:
-      http:
-processors:
-  batch:
-exporters:
-  logging:
-    loglevel: debug
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging]
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
+    jaeger:
+      protocols:
+        thrift_http:
+        grpc:
+        thrift_binary:
+        thrift_compact:
+
+
+  log_received_spans:
+    enabled: true
+    include_all_attributes: true
+
+  log_discarded_spans:
+    enabled: false
+
+  metric_received_spans:
+    enabled: true
+    root_only: false
+
+  usage:
+    cost_attribution:
+      enabled: false
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tmp/tempo/traces
