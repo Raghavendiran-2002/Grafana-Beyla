@@ -1,6 +1,7 @@
 # Grafana Beyla Flask Observability Demo
 
 ## 📦 Stack Components
+
 - Flask Python app (with gunicorn)
 - Grafana Beyla (eBPF mode)
 - Prometheus
@@ -8,6 +9,21 @@
 - Grafana
 
 ## ▶️ Run the Stack
+
+Verify eBPF is supported on linux kernal :
+
+```bash
+docker info | grep Kernel
+```
+
+Ensure the printed version is **4.9 or later**
+
+
+Enable eBPF Support on container
+
+```bash
+bpftool feature
+```
 
 ```bash
 docker-compose up --build
@@ -18,6 +34,7 @@ docker-compose up --build
 - Flask App: http://localhost:8000
 - Status: http://localhost:8000/status
 - Grafana: http://localhost:3000 (admin/admin)
+- Add "Data Source" -> "prometheus" -> set "prometheus server URL" =  "http://prometheus:9090"
 - Prometheus: http://localhost:9090
 - Tempo (via Grafana Explore)
 

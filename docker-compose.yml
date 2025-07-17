@@ -10,11 +10,16 @@ services:
 
   beyla:
     image: grafana/beyla:latest
-    command: ["--config", "/etc/beyla/beyla-config.yaml"]
+    privileged: true
+    network_mode: "host"
+    pid: "host"
     volumes:
-      - ./beyla-config.yaml:/etc/beyla/beyla-config.yaml
       - /sys:/sys
-      - /proc:/host/proc
+      - /proc:/proc
+      - /etc/os-release:/etc/os-release:ro
+    environment:
+      - BEYLA_CONFIG_PATH=/beyla-config.yaml
+    command: [ "run", "--config", "/beyla-config.yaml" ]
     environment:
       - BEYLA_LOG_LEVEL=info
     cap_add:
